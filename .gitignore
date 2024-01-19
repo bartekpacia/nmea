@@ -1,0 +1,6 @@
+.DS_Store
+
+/bazel-bin
+/bazel-out
+/bazel-nmea
+/bazel-testlogs
