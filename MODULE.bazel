@@ -6,3 +6,12 @@ module(
 )
 
 bazel_dep(name = "googletest", version = "1.14.0", repo_name = "gtest")
+
+# Hedron's Compile Commands Extractor for Bazel
+# https://github.com/hedronvision/bazel-compile-commands-extractor
+bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
+git_override(
+    module_name = "hedron_compile_commands",
+    remote = "https://github.com/hedronvision/bazel-compile-commands-extractor.git",
+    commit = "4d5671472a7272ea19dd61debf1e64d8aed27b41",
+)
