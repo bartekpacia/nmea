@@ -70,7 +70,7 @@ class Longitude {
 class GGA {
  public:
   GGA(std::string time, Latitude latitude, Longitude longitude, PositionFixIndicator pfi,
-      uint8_t satelliteCount);
+      uint8_t satelliteCount, std::string hdop, std::string altitude);
   ~GGA();
 
   // UTC time.
@@ -87,6 +87,12 @@ class GGA {
   PositionFixIndicator pfi;
 
   uint8_t satelliteCount;
+
+  // Horizontal dilution of precision.
+  std::string hdop;
+
+  // Mean Surface Level Altitude.
+  std::string altitude;
 
   static inline const std::string id = "GGA";
 };

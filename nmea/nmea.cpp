@@ -1,5 +1,6 @@
 #include "nmea/nmea.h"
 
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -75,35 +76,33 @@ auto parsePositionFixIndicator(std::string indicator) -> PositionFixIndicator {
 }  // namespace
 
 GGA::GGA(std::string time, Latitude latitude, Longitude longitude, PositionFixIndicator pfi,
-         uint8_t satelliteCount)
+         uint8_t satelliteCount, std::string hdop, std::string altitude)
     : time(std::move(time)),
       latitude(std::move(latitude)),
       longitude(std::move(longitude)),
       pfi(pfi),
-      satelliteCount(satelliteCount) {
-  std::cout << "GGA constructor" << std::endl;
-}
+      satelliteCount(satelliteCount),
+      hdop(std::move(hdop)),
+      altitude(std::move(altitude)) {}
 
-GGA::~GGA() { std::cout << "GGA destructor" << std::endl; }
+GGA::~GGA() = default;
 
-Parser::Parser() { std::cout << "Parser constructor" << std::endl; }
+Parser::Parser() = default;
 
-Parser::~Parser() { std::cout << "Parser destructor" << std::endl; }
+Parser::~Parser() = default;
 
 auto Parser::parseGGA(const std::string &sentence) -> GGA * {
   std::vector<std::string> splits = split(sentence, ",");
-
-  for (auto &s : splits) {
-    std::cout << s << std::endl;
-  }
 
   std::string time = splits[1];
   Latitude latitude(splits[2], parseVerticalHemisphere(splits[3]));
   Longitude longitude(splits[4], parseHorizontalHemisphere(splits[5]));
   PositionFixIndicator pfi = parsePositionFixIndicator(splits[6]);
   uint8_t satelliteCount = std::stoi(splits[7]);
+  std::string hdop = splits[8];
+  std::string altitude = splits[9];
 
-  GGA *gga = new GGA(time, latitude, longitude, pfi, satelliteCount);
+  GGA *gga = new GGA(time, latitude, longitude, pfi, satelliteCount, hdop, altitude);
   return gga;
 }
 
