@@ -1,12 +1,13 @@
-#include "gtest/gtest.h"
-
-#include "nmea/nmea.h"
 #include <iostream>
+
+#include "gtest/gtest.h"
+#include "nmea/nmea.h"
 
 TEST(SmokeTest, ParseGGA) {
   // $GPGGA,002153.000,3342.6618,N,11751.3858,W,1,10,1.2,27.0,M,-34.2,M,,0000*5E
-  std::string sentence = "$GPGGA,002153.000,3342.6618,N,11751.3858,W,1,10,1.2,"
-                         "27.0,M,-34.2,M,,0000*5E";
+  std::string sentence =
+      "$GPGGA,002153.000,3342.6618,N,11751.3858,W,1,10,1.2,"
+      "27.0,M,-34.2,M,,0000*5E";
   nmea::Parser parser;
   nmea::GGA *gga = parser.parseGGA(sentence);
   EXPECT_EQ(gga->time, "002153.000");

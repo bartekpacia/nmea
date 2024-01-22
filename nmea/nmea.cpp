@@ -1,7 +1,9 @@
 #include "nmea/nmea.h"
+
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 // Implementation of the NMEA parser and data structures.
@@ -15,7 +17,7 @@ namespace nmea {
 namespace {
 
 // Splits "str" into a vector of strings using "sep" as a delimeter.
-std::vector<std::string> split(const std::string &str, std::string sep) {
+auto split(const std::string &str, std::string sep) -> std::vector<std::string> {
   std::vector<std::string> result;
 
   auto start = 0U;
@@ -31,7 +33,7 @@ std::vector<std::string> split(const std::string &str, std::string sep) {
   return result;
 }
 
-VerticalHemisphere parseVerticalHemisphere(std::string hemisphere) {
+auto parseVerticalHemisphere(std::string hemisphere) -> VerticalHemisphere {
   if (hemisphere == "N") {
     return VerticalHemisphere::North;
   } else if (hemisphere == "S") {
@@ -41,7 +43,7 @@ VerticalHemisphere parseVerticalHemisphere(std::string hemisphere) {
   }
 }
 
-HorizontalHemisphere parseHorizontalHemisphere(std::string hemisphere) {
+auto parseHorizontalHemisphere(std::string hemisphere) -> HorizontalHemisphere {
   if (hemisphere == "E") {
     return HorizontalHemisphere::East;
   } else if (hemisphere == "W") {
@@ -51,7 +53,7 @@ HorizontalHemisphere parseHorizontalHemisphere(std::string hemisphere) {
   }
 }
 
-PositionFixIndicator parsePositionFixIndicator(std::string indicator) {
+auto parsePositionFixIndicator(std::string indicator) -> PositionFixIndicator {
   if (indicator == "0") {
     return PositionFixIndicator::ZERO;
   } else if (indicator == "1") {
@@ -70,11 +72,14 @@ PositionFixIndicator parsePositionFixIndicator(std::string indicator) {
     throw std::runtime_error("Invalid position fix indicator: " + indicator);
   }
 }
-} // namespace
+}  // namespace
 
-GGA::GGA(std::string time, Latitude latitude, Longitude longitude,
-         PositionFixIndicator pfi, uint8_t satelliteCount)
-    : time(time), latitude(latitude), longitude(longitude), pfi(pfi),
+GGA::GGA(std::string time, Latitude latitude, Longitude longitude, PositionFixIndicator pfi,
+         uint8_t satelliteCount)
+    : time(std::move(time)),
+      latitude(std::move(latitude)),
+      longitude(std::move(longitude)),
+      pfi(pfi),
       satelliteCount(satelliteCount) {
   std::cout << "GGA constructor" << std::endl;
 }
@@ -85,7 +90,7 @@ Parser::Parser() { std::cout << "Parser constructor" << std::endl; }
 
 Parser::~Parser() { std::cout << "Parser destructor" << std::endl; }
 
-GGA *Parser::parseGGA(const std::string &sentence) {
+auto Parser::parseGGA(const std::string &sentence) -> GGA * {
   std::vector<std::string> splits = split(sentence, ",");
 
   for (auto &s : splits) {
@@ -102,4 +107,4 @@ GGA *Parser::parseGGA(const std::string &sentence) {
   return gga;
 }
 
-} // namespace nmea
+}  // namespace nmea
