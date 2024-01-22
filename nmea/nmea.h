@@ -3,7 +3,6 @@
 #include <string>
 
 namespace nmea {
-std::string nmea_stuff();
 
 enum class VerticalHemisphere {
   North,
@@ -35,7 +34,7 @@ enum class PositionFixIndicator {
 class Latitude {
 public:
   Latitude(std::string latitude, VerticalHemisphere hemisphere)
-      : value(latitude), hemisphere(hemisphere) {}
+      : value(std::move(latitude)), hemisphere(hemisphere) {}
 
   // Latitude.
   //
@@ -45,15 +44,13 @@ public:
   std::string value;
 
   // Northern or southern hemisphere.
-  //
-  // Example: N
   VerticalHemisphere hemisphere;
 };
 
 class Longitude {
 public:
   Longitude(std::string latitude, HorizontalHemisphere hemisphere)
-      : value(latitude), hemisphere(hemisphere) {}
+      : value(std::move(latitude)), hemisphere(hemisphere) {}
 
   // Longitude value
   //
@@ -73,7 +70,7 @@ public:
 class GGA {
 public:
   GGA(std::string time, Latitude latitude, Longitude longitude,
-      PositionFixIndicator pfi);
+      PositionFixIndicator pfi, uint8_t satelliteCount);
   ~GGA();
 
   // UTC time.
@@ -89,6 +86,8 @@ public:
 
   PositionFixIndicator pfi;
 
+  uint8_t satelliteCount;
+
   static inline const std::string id = "GGA";
 };
 
@@ -97,7 +96,7 @@ public:
   Parser();
   ~Parser();
 
-  GGA *parseGGA(const std::string &sentence);
+  auto parseGGA(const std::string &sentence) -> GGA *;
 };
 
 } // namespace nmea

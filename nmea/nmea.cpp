@@ -72,11 +72,10 @@ PositionFixIndicator parsePositionFixIndicator(std::string indicator) {
 }
 } // namespace
 
-std::string nmea_stuff() { return "nmea_stuff"; }
-
 GGA::GGA(std::string time, Latitude latitude, Longitude longitude,
-         PositionFixIndicator pfi)
-    : time(time), latitude(latitude), longitude(longitude), pfi(pfi) {
+         PositionFixIndicator pfi, uint8_t satelliteCount)
+    : time(time), latitude(latitude), longitude(longitude), pfi(pfi),
+      satelliteCount(satelliteCount) {
   std::cout << "GGA constructor" << std::endl;
 }
 
@@ -97,8 +96,9 @@ GGA *Parser::parseGGA(const std::string &sentence) {
   Latitude latitude(splits[2], parseVerticalHemisphere(splits[3]));
   Longitude longitude(splits[4], parseHorizontalHemisphere(splits[5]));
   PositionFixIndicator pfi = parsePositionFixIndicator(splits[6]);
+  uint8_t satelliteCount = std::stoi(splits[7]);
 
-  GGA *gga = new GGA(time, latitude, longitude, pfi);
+  GGA *gga = new GGA(time, latitude, longitude, pfi, satelliteCount);
   return gga;
 }
 

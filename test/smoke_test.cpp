@@ -3,10 +3,6 @@
 #include "nmea/nmea.h"
 #include <iostream>
 
-TEST(SmokeTest, ReturnsHelloWorld) {
-  EXPECT_EQ(nmea::nmea_stuff(), "nmea_stuff");
-}
-
 TEST(SmokeTest, ParseGGA) {
   // $GPGGA,002153.000,3342.6618,N,11751.3858,W,1,10,1.2,27.0,M,-34.2,M,,0000*5E
   std::string sentence = "$GPGGA,002153.000,3342.6618,N,11751.3858,W,1,10,1.2,"
@@ -19,10 +15,8 @@ TEST(SmokeTest, ParseGGA) {
   EXPECT_EQ(gga->longitude.value, "11751.3858");
   EXPECT_EQ(gga->longitude.hemisphere, nmea::HorizontalHemisphere::West);
   EXPECT_EQ(gga->pfi, nmea::PositionFixIndicator::ONE);
+  EXPECT_EQ(gga->satelliteCount, 10);
 }
-
-// TODO first test:
-//
 
 // ```
 // $GPGGA,184353.07,1929.045,S,02410.506,E,1,04,2.6,100.00,M,-33.9,M,,0000*6D
