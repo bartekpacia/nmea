@@ -21,6 +21,30 @@ TEST(SmokeTest, ParseGGA) {  // NOLINT
   EXPECT_EQ(gga->altitude, "27.0");
 }
 
+TEST(SmokeTest, ParseGLL) {
+  std::string gllSentence =
+      "$GPGLL,1929.045,S,02410.506,E,184353.07,A*33";
+  nmea::Parser parser;
+  nmea::GLL *gll = parser.parseGLL(gllSentence);
+  EXPECT_EQ(gll->time, "184353.07");
+  EXPECT_EQ(gll->latitude.value, "1929.045");
+  EXPECT_EQ(gll->latitude.hemisphere, nmea::VerticalHemisphere::South);
+  EXPECT_EQ(gll->longitude.value, "02410.506");
+  EXPECT_EQ(gll->longitude.hemisphere, nmea::HorizontalHemisphere::East);
+}
+
+TEST(SmokeTest, ParseGSA) {
+  std::string gsaSentence =
+      "$GPGSA,A,3,04,05,,09,12,,,24,,,,,2.5,1.3,2.1*39";
+  nmea::Parser parser;
+  nmea::GSA *gsa = parser.parseGSA(gsaSentence);
+  EXPECT_EQ(gsa->mode, "A");
+  EXPECT_EQ(gsa->modeFix, "3");
+  EXPECT_EQ(gsa->satelliteIDs.size(), 5);
+  EXPECT_EQ(gsa->pdop, "2.5");
+  EXPECT_EQ(gsa->hdop, "1.3");
+  EXPECT_EQ(gsa->vdop, "2.1");
+}
 // ```
 // $GPGGA,184353.07,1929.045,S,02410.506,E,1,04,2.6,100.00,M,-33.9,M,,0000*6D
 // ```

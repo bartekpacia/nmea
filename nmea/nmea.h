@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace nmea {
 
@@ -96,6 +97,52 @@ class GGA {
 
   static inline const std::string id = "GGA";
 };
+class GLL {
+ public:
+  GLL(std::string time, Latitude latitude, Longitude longitude)
+      : time(std::move(time)), latitude(latitude), longitude(longitude) {}
+
+  // UTC time.
+  //
+  // Format: hhmmss.sss
+  //
+  // Example: 002153.000
+  std::string time;
+
+  Latitude latitude;
+
+  Longitude longitude;
+
+  static inline const std::string id = "GLL";
+};
+
+class GSA {
+ public:
+  GSA(std::string mode, std::string modeFix, std::vector<uint8_t> satelliteIDs,
+      std::string pdop, std::string hdop, std::string vdop)
+      : mode(std::move(mode)), modeFix(std::move(modeFix)), satelliteIDs(std::move(satelliteIDs)),
+        pdop(std::move(pdop)), hdop(std::move(hdop)), vdop(std::move(vdop)) {}
+
+  // Mode
+  std::string mode;
+
+  // Mode Fix
+  std::string modeFix;
+
+  // List of satellite IDs used in fix
+  std::vector<uint8_t> satelliteIDs;
+
+  // Position dilution of precision
+  std::string pdop;
+
+  // Horizontal dilution of precision
+  std::string hdop;
+
+  // Vertical dilution of precision
+  std::string vdop;
+
+  static inline const std::string id = "GSA";
+};
 
 class Parser {
  public:
@@ -103,6 +150,8 @@ class Parser {
   ~Parser();
 
   auto parseGGA(const std::string &sentence) -> GGA *;
+  auto parseGLL(const std::string &sentence) -> GLL *;
+  auto parseGSA(const std::string &sentence) -> GSA *;
 };
 
 }  // namespace nmea

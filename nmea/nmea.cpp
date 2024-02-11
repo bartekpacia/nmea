@@ -105,5 +105,42 @@ auto Parser::parseGGA(const std::string &sentence) -> GGA * {
   GGA *gga = new GGA(time, latitude, longitude, pfi, satelliteCount, hdop, altitude);
   return gga;
 }
+auto Parser::parseGLL(const std::string &sentence) -> GLL * {
+  std::vector<std::string> splits = split(sentence, ",");
+
+  std::string time = splits[5];
+  Latitude latitude(splits[1], parseVerticalHemisphere(splits[2]));
+  Longitude longitude(splits[3], parseHorizontalHemisphere(splits[4]));
+
+  GLL *gll = new GLL(time, latitude, longitude);
+  return gll;
+}
+
+auto Parser::parseGSA(const std::string &sentence) -> GSA * {
+  std::vector<std::string> splits = split(sentence, ",");
+
+  auto mode = splits[1];
+  auto modeFix = splits[2];
+
+  std::vector<uint8_t> satelliteIDs;
+  for (size_t i = 3; i < 15; ++i) {
+    if (!splits[i].empty() && splits[i] != ",") {
+      satelliteIDs.push_back(std::stoi(splits[i]));
+    }
+  }
+
+  auto pdop = splits[15];
+  auto hdop = splits[16];
+  auto vdop = splits[17];
+
+  size_t checksumPos = vdop.find('*');
+  if (checksumPos != std::string::npos) {
+    vdop = vdop.substr(0, checksumPos);
+  }
+
+  GSA *gsa = new GSA(mode, modeFix, satelliteIDs, pdop, hdop, vdop);
+  return gsa;
+}
+
 
 }  // namespace nmea
